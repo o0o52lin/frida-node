@@ -43,10 +43,13 @@ def main(argv: list[str]):
                        capture_output=True,
                        cwd=abidir,
                        check=True)
-        subprocess.run([npm, "install", "node-gyp"],
-                       capture_output=True,
-                       cwd=abidir,
-                       check=True)
+        node_gyp_check = subprocess.run([npm, "list", "node-gyp"], capture_output=True, cwd=abidir)
+        if node_gyp_check.returncode != 0:
+            # node-gyp 未安装，所以我们执行安装命令
+            subprocess.run([npm, "install", "node-gyp"],
+                           capture_output=True,
+                           cwd=abidir,
+                           check=True)
 
         node_defines = load_node_defines(gyp_os, gyp_arch, node_gypdir,
                                          abidir / "node_modules" / "node-gyp" / "gyp" / "pylib")
